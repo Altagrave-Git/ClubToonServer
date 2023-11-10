@@ -10,12 +10,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 
 DEBUG = os.environ.get('DEBUG')
 
-ALLOWED_HOSTS = [
-    os.environ.get('ALLOWED_HOSTS1'),
-    os.environ.get('ALLOWED_HOSTS2'),
-    os.environ.get('ALLOWED_HOSTS3'),
-    'localhost'
-]
+ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'daphne',
