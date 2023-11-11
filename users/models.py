@@ -28,11 +28,10 @@ class UserManager(BaseUserManager):
 
 
 USER_STAGE = [
-    (4, 'Select Username'),
-    (3, 'Select Avatar'),
-    (2, 'Select Color'),
-    (1, 'Tutorial'),
-    (0, 'Complete')
+    (0, 'Complete'),
+    (1, 'Select Username'),
+    (2, 'Select Avatar'),
+    (3, 'Select Color'),
 ]
 
 COLORS_CHOICES = [
@@ -50,12 +49,8 @@ COLORS_CHOICES = [
 ]
 
 class User(AbstractBaseUser):
-    email = models.EmailField(
-        verbose_name="email address",
-        max_length=255,
-        unique=True,
-    )
-    username = models.CharField(max_length=100, null=True, blank=True, default="Anon")
+    email = models.EmailField(verbose_name="email address", max_length=100, unique=True)
+    username = models.CharField(max_length=40, null=True, blank=True, default="Anon")
     color = models.CharField(max_length=20, choices=COLORS_CHOICES, default='red')
     is_new = models.SmallIntegerField(choices=USER_STAGE, default=3)
 
