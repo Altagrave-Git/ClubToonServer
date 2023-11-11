@@ -17,6 +17,7 @@ INSTALLED_APPS = [
     'channels',
     'corsheaders',
     'rest_framework',
+    'rest_framework.authtoken',
     'users.apps.UsersConfig',
     'django.contrib.admin',
     'django.contrib.auth',
