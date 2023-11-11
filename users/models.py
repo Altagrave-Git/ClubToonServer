@@ -27,13 +27,6 @@ class UserManager(BaseUserManager):
         return user
 
 
-USER_STAGE = [
-    (0, 'Complete'),
-    (1, 'Select Username'),
-    (2, 'Select Avatar'),
-    (3, 'Select Color'),
-]
-
 COLORS_CHOICES = [
     ('blue', 'Blue'),
     ('light-blue', 'Light Blue'),
@@ -50,9 +43,8 @@ COLORS_CHOICES = [
 
 class User(AbstractBaseUser):
     email = models.EmailField(verbose_name="email address", max_length=100, unique=True)
-    username = models.CharField(max_length=40, null=True, blank=True, default="Anon")
+    username = models.CharField(max_length=40, null=True, blank=True, default=None)
     color = models.CharField(max_length=20, choices=COLORS_CHOICES, default='red')
-    is_new = models.SmallIntegerField(choices=USER_STAGE, default=3)
 
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
@@ -74,10 +66,6 @@ class User(AbstractBaseUser):
     @property
     def is_staff(self):
         return self.is_admin
-    
-    def save(self, *args, **kwargs):
-        if not self.username: self.username = "Anon"
-        return super().save(*args, **kwargs)
     
 
 class Avatar(models.Model):
