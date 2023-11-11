@@ -1,5 +1,6 @@
-from django.urls import re_path
-from users.routing import websocket_urlpatterns as users_urlpatterns
+from django.urls import include, re_path
 
 
-websocket_urlpatterns = users_urlpatterns
+websocket_urlpatterns = [
+    re_path(r'ws/users/', include('users.routing')),
+]
