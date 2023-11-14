@@ -1,16 +1,16 @@
-from rest_framework.authtoken.models import Token
+from knox.models import AuthToken
 from urllib.parse import parse_qs
 from channels.db import database_sync_to_async
 from django.contrib.auth.models import AnonymousUser
 
 
 @database_sync_to_async
-def returnUser(token_string):
-    try: user = Token.objects.get(key=token_string).user
+def return_user(token):
+    try: user = AuthToken.objects.get(digest=token).user
     except: user = AnonymousUser()
     return user
 
-# token from url params => user in scope
+# token from params => set user scope
 class TokenAuthMiddleware:
     def __init__(self, app):
         self.app = app
@@ -20,6 +20,6 @@ class TokenAuthMiddleware:
         query_params = query_string.decode()
         query_dict = parse_qs(query_params)
         token = query_dict["token"][0]
-        user = await returnUser(token)
+        user = await return_user(token)
         scope["user"] = user
         return await self.app(scope, receive, send)
