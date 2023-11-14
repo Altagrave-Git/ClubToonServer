@@ -1,37 +1,49 @@
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.hashers import check_password
-from django.contrib import messages
-from users.models import User
-from django.contrib.auth import authenticate
-from django.contrib.auth.decorators import login_required
-from users.serializers import UserSerializer
-from rest_framework.decorators import api_view, authentication_classes, renderer_classes, throttle_classes, parser_classes, permission_classes
+
+from rest_framework import status, permissions, parsers
+from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import authentication
-from rest_framework.authtoken.models import Token
+
+from users.models import User
+from users.serializers import UserSerializer, AuthTokenSerializer
+
+from knox.views import LoginView as KnoxLoginView
+from knox.models import AuthToken
 
 
+class LoginView(KnoxLoginView):
+    permission_classes = (permissions.AllowAny,)
 
-@api_view(["POST"])
-def login_view(request):
-    if request.method == "POST":
-        print(request.data)
-        return Response(data={"msg": "received"}, status=status.HTTP_200_OK)
+    def post(self, request, format=None):
+        serializer = AuthTokenSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.validated_data['user']
+            login(request, user)
+            return super(LoginView, self).post(request, format=None)
+        
+        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
-    else:
-        return Response(data={"msg": "meh"}, status=status.HTTP_200_OK)
+
+class RegisterView(APIView):
+    permission_classes = (permissions.AllowAny,)
     
+    def post(self, request):
+        if User.objects.filter(email=request.data['email']).exists():
+            return Response(data={'error': 'Email is already taken.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            token = user.auth_token_set.all()[0]
+            login(request, user)
 
-@api_view(["POST"])
-def loginView(request, *args, **kwargs):
-    username = request.POST.get("username")
-    password = request.POST.get("password")
+            data = {
+                'expiry': token.expiry,
+                'token': token.digest,
+                'user': serializer.data
+            }
 
-    try: user = authenticate(username=username, password=password)
-    except: user = None
-
-    if not user:
-        return Response({"user_not_found": "There is no user with this username and password !"})
-    
-    token = Token.objects.get(user=user)
-    return Response({"token": token.key,})
+            return Response(data=data, status=status.HTTP_200_OK)
+        
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
