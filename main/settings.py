@@ -17,7 +17,7 @@ INSTALLED_APPS = [
     'channels',
     'corsheaders',
     'rest_framework',
-    'rest_framework.authtoken',
+    'knox',
     'users.apps.UsersConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -96,8 +96,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer'
     }
 }
 
@@ -109,6 +109,17 @@ CHANNEL_LAYERS = {
 #         },
 #     },
 # }
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'knox.auth.TokenAuthentication'
+    ],
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.MultiPartParser'
+    ]
+}
+
 
 LANGUAGE_CODE = 'en-us'
 
@@ -127,3 +138,8 @@ AUTH_USER_MODEL = 'users.User'
 LOGOUT_REDIRECT_URL = 'login'
 
 LOGIN_URL = 'login'
+
+REST_KNOX = {
+    'USER_SERIALIZER': 'users.serializers.UserSerializer',
+    'AUTH_TOKEN_CHARACTER_LENGTH': 128
+}
