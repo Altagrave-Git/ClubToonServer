@@ -3,24 +3,20 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, username, password=None):
+    def create_user(self, email, password=None):
         if not email:
             raise ValueError("Users must have an email address")
 
-        user = self.model(
-            email=self.normalize_email(email),
-            username=username,
-        )
+        user = self.model(email=self.normalize_email(email))
 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, username, password=None):
+    def create_superuser(self, email, password=None):
         user = self.create_user(
             email,
-            password=password,
-            username=username,
+            password=password
         )
         user.is_admin = True
         user.save(using=self._db)
@@ -42,7 +38,7 @@ COLORS_CHOICES = [
 ]
 
 class User(AbstractBaseUser):
-    email = models.EmailField(verbose_name="email address", max_length=100, unique=True)
+    email = models.EmailField(verbose_name="email address", max_length=100, unique=True, db_index=True)
     username = models.CharField(max_length=40, null=True, blank=True, default=None)
     color = models.CharField(max_length=20, choices=COLORS_CHOICES, default='red')
 
@@ -52,7 +48,6 @@ class User(AbstractBaseUser):
     objects = UserManager()
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["username"]
 
     def __str__(self):
         return self.email
@@ -69,7 +64,7 @@ class User(AbstractBaseUser):
     
 
 class Avatar(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='avatar')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='avatar', db_index=True)
 
     skin = models.IntegerField(default=0)
     hair = models.IntegerField(default=0)
