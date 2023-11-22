@@ -1,13 +1,7 @@
 from rest_framework import serializers
-from users.models import User, Avatar
+from users.models import User
 from django.contrib.auth import authenticate
-from knox.models import AuthToken
-
-
-class AvatarSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Avatar
-        fields = '__all__'
+from avatar.serializers import AvatarSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -17,10 +11,14 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'email', 'password', 'password2', 'username', 'color', 'avatar']
+        fields = ['id', 'email', 'password', 'password2', 'username', 'color', 'theme', 'avatar', 'is_new']
 
     def get_avatar(self, obj):
-        return AvatarSerializer(obj.avatar.all()[0]).data
+        avatar = obj.avatar.all()
+        if avatar.exists():
+            return AvatarSerializer(obj.avatar.all()[0]).data
+        else:
+            return None
 
     def create(self, validated_data):
         password = validated_data.get('password')
