@@ -1,5 +1,5 @@
 from django.dispatch import receiver
-from users.models import User, Avatar
+from users.models import User
 from django.db.models.signals import post_save
 from knox.models import AuthToken
  
@@ -9,4 +9,3 @@ from knox.models import AuthToken
 def create_token(sender, instance, created, **kwargs):
     if created:
         AuthToken.objects.create(user=instance)
-        Avatar.objects.create(user=instance)
