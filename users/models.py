@@ -37,11 +37,17 @@ COLORS_CHOICES = [
     ('white', 'White')
 ]
 
+THEME_CHOICES = [
+    ('default', 'Default')
+]
+
 class User(AbstractBaseUser):
     email = models.EmailField(verbose_name="email address", max_length=100, unique=True, db_index=True)
     username = models.CharField(max_length=40, null=True, blank=True, default=None)
-    color = models.CharField(max_length=20, choices=COLORS_CHOICES, default='red')
+    color = models.CharField(max_length=20, choices=COLORS_CHOICES, default='red', blank=True)
+    theme = models.CharField(max_length=20, choices=THEME_CHOICES, default='default', blank=True)
 
+    is_new = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
 
@@ -61,19 +67,3 @@ class User(AbstractBaseUser):
     @property
     def is_staff(self):
         return self.is_admin
-    
-
-class Avatar(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='avatar', db_index=True)
-
-    skin = models.IntegerField(default=0)
-    hair = models.IntegerField(default=0)
-    eyes = models.IntegerField(default=0)
-    mouth = models.IntegerField(default=0)
-    torso = models.IntegerField(default=0)
-    hands = models.IntegerField(default=0)
-    legs = models.IntegerField(default=0)
-    feet = models.IntegerField(default=0)
-
-    def __str__(self):
-        return str(self.id)
