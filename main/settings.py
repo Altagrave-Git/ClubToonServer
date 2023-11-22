@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'knox',
     'users.apps.UsersConfig',
+    'avatar.apps.AvatarConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
