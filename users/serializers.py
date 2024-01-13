@@ -11,7 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'email', 'password', 'password2', 'username', 'color', 'theme', 'avatar', 'is_new']
+        fields = ['id', 'email', 'password', 'password2', 'username', 'color', 'theme', 'coins', 'avatar', 'is_new']
 
     def get_avatar(self, obj):
         avatar = obj.avatar.all()
