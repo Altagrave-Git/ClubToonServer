@@ -42,10 +42,11 @@ THEME_CHOICES = [
 ]
 
 class User(AbstractBaseUser):
-    email = models.EmailField(verbose_name="email address", max_length=100, unique=True, db_index=True)
+    email = models.EmailField(verbose_name="email address", max_length=100, unique=True)
     username = models.CharField(max_length=40, null=True, blank=True, default=None)
     color = models.CharField(max_length=20, choices=COLORS_CHOICES, default='red', blank=True)
     theme = models.CharField(max_length=20, choices=THEME_CHOICES, default='default', blank=True)
+    coins = models.IntegerField(default=10000, blank=True)
 
     is_new = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
