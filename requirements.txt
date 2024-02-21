@@ -4,5 +4,5 @@ daphne==4.0.0
 djangorestframework==3.14.0
 django-cors-headers==4.0.0
 python-dotenv==1.0.0
-cryptography==41.0.6
+cryptography==42.0.4
 django-rest-knox==4.2.0
